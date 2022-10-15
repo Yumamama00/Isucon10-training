@@ -60,4 +60,9 @@ CREATE TABLE isuumo.chair (
 ALTER TABLE
     isuumo.chair
 ADD
+    INDEX `idx_stock`(`stock`);
+
+ALTER TABLE
+    isuumo.chair
+ADD
     INDEX `idx_popularity_id`(`popularity`, `id`);
