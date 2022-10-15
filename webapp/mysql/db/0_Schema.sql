@@ -34,6 +34,11 @@ ADD
 ALTER TABLE
     isuumo.estate
 ADD
+    INDEX `idx_doorheight`(door_height);
+
+ALTER TABLE
+    isuumo.estate
+ADD
     INDEX `idx_popularity_id`(popularity DESC, id);
 
 CREATE TABLE isuumo.chair (
