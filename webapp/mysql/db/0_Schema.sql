@@ -24,22 +24,22 @@ CREATE TABLE isuumo.estate (
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_rent`(`rent`);
+    INDEX `idx_rent`(rent);
 
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_doorwidth_doorheight`(`door_width`, `door_height`);
+    INDEX `idx_doorwidth_doorheight`(door_width, door_height);
 
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_doorheight`(`door_height`);
+    INDEX `idx_doorheight`(door_height);
 
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_latitude_longitude`(`latitude`, `longitude`);
+    INDEX `idx_latitude_longitude`(latitude, longitude);
 
 CREATE TABLE isuumo.chair (
     id INTEGER NOT NULL PRIMARY KEY,
@@ -60,9 +60,9 @@ CREATE TABLE isuumo.chair (
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_stock`(`stock`);
+    INDEX `idx_stock`(stock);
 
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_popularity_id`(`popularity` DESC, `id`);
+    INDEX `idx_popularity_id`(popularity DESC, id);
