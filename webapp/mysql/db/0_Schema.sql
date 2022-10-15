@@ -65,4 +65,4 @@ ADD
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_popularity_id`(`popularity`, `id`);
+    INDEX `idx_popularity_id`(`popularity` DESC, `id`);
