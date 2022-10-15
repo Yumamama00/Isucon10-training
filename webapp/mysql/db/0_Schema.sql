@@ -21,11 +21,6 @@ CREATE TABLE isuumo.estate (
     popularity INTEGER NOT NULL
 );
 
-ALTER TABLE
-    isuumo.estate
-ADD
-    INDEX `idx_popularity_id`(popularity DESC, id);
-
 CREATE TABLE isuumo.chair (
     id INTEGER NOT NULL PRIMARY KEY,
     name VARCHAR(64) NOT NULL,
@@ -41,13 +36,3 @@ CREATE TABLE isuumo.chair (
     popularity INTEGER NOT NULL,
     stock INTEGER NOT NULL
 );
-
-ALTER TABLE
-    isuumo.chair
-ADD
-    INDEX `idx_stock`(stock);
-
-ALTER TABLE
-    isuumo.chair
-ADD
-    INDEX `idx_popularity_id`(popularity DESC, id);
