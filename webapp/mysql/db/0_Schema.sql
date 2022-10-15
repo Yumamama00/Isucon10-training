@@ -24,7 +24,7 @@ CREATE TABLE isuumo.estate (
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_popularity_id`(popularity DESC, id);
+    INDEX `idx_popularity_id`(popularity, id);
 
 CREATE TABLE isuumo.chair (
     id INTEGER NOT NULL PRIMARY KEY,
@@ -45,4 +45,4 @@ CREATE TABLE isuumo.chair (
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_popularity_id`(popularity DESC, id);
+    INDEX `idx_popularity_id`(popularity, id);
