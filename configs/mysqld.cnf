@@ -4,7 +4,7 @@
 # You can copy this to one of:
 # - "/etc/mysql/my.cnf" to set global options,
 # - "~/.my.cnf" to set user-specific options.
-# 
+#
 # One can use all long options that the program supports.
 # Run program with --help to get a list of available options and with
 # --print-defaults to see which it would actually understand and use.
@@ -25,6 +25,15 @@ socket          = /var/run/mysqld/mysqld.sock
 nice            = 0
 
 [mysqld]
+
+# ISUCON
+bind-address            = 0.0.0.0
+slow_query_log         = 1
+# ログ出力先の権限確認
+slow_query_log_file    = /var/log/mysql/mysql-slow.log
+long_query_time        = 0
+log-queries-not-using-indexes
+
 #
 # * Basic Settings
 #
@@ -40,7 +49,7 @@ skip-external-locking
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
-bind-address            = 127.0.0.1
+#bind-address            = 127.0.0.1
 #
 # * Fine Tuning
 #
