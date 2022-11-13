@@ -35,11 +35,6 @@ ADD
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_doorheight`(door_height);
-
-ALTER TABLE
-    isuumo.estate
-ADD
     INDEX `idx_popularity_id`(negative_popularity, id);
 
 CREATE TABLE isuumo.chair (
@@ -58,6 +53,11 @@ CREATE TABLE isuumo.chair (
     stock INTEGER NOT NULL,
     negative_popularity INTEGER AS (- popularity) NOT NULL
 );
+
+ALTER TABLE
+    isuumo.chair
+ADD
+    INDEX `idx_price_id`(price, id);
 
 ALTER TABLE
     isuumo.chair
