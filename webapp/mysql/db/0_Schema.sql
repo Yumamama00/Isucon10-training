@@ -35,6 +35,11 @@ ADD
 ALTER TABLE
     isuumo.estate
 ADD
+    INDEX `idx_latitude_longitude`(latitude, longitude);
+
+ALTER TABLE
+    isuumo.estate
+ADD
     INDEX `idx_popularity_id`(negative_popularity, id);
 
 CREATE TABLE isuumo.chair (
