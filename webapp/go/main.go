@@ -877,9 +877,14 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
+	count := 0
 	estatesInPolygon := []Estate{}
 	for _, estate := range estatesInBoundingBox {
 		validatedEstate := Estate{}
+
+		if count == NazotteLimit {
+			break
+		}
 
 		point := fmt.Sprintf("'POINT(%f %f)'", estate.Latitude, estate.Longitude)
 		query := fmt.Sprintf(`SELECT * FROM estate WHERE id = ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))`, coordinates.coordinatesToText(), point)
@@ -892,17 +897,14 @@ func searchEstateNazotte(c echo.Context) error {
 				return c.NoContent(http.StatusInternalServerError)
 			}
 		} else {
+			count++
 			estatesInPolygon = append(estatesInPolygon, validatedEstate)
 		}
 	}
 
 	var re EstateSearchResponse
-	re.Estates = []Estate{}
-	if len(estatesInPolygon) > NazotteLimit {
-		re.Estates = estatesInPolygon[:NazotteLimit]
-	} else {
-		re.Estates = estatesInPolygon
-	}
+
+	re.Estates = estatesInPolygon
 	re.Count = int64(len(re.Estates))
 
 	return c.JSON(http.StatusOK, re)
