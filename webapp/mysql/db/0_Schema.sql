@@ -25,7 +25,7 @@ CREATE TABLE isuumo.estate (
 ALTER TABLE
     isuumo.estate
 ADD
-    INDEX `idx_rent`(rent);
+    INDEX `idx_rent_id`(rent, id);
 
 ALTER TABLE
     isuumo.estate
@@ -62,7 +62,7 @@ CREATE TABLE isuumo.chair (
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_price_id`(price, id);
+    INDEX `idx_stock_price_id`(stock, price, id);
 
 ALTER TABLE
     isuumo.chair
