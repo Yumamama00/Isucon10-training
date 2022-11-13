@@ -22,12 +22,12 @@ CREATE TABLE isuumo.estate (
     negative_popularity INTEGER AS (- popularity) NOT NULL
 );
 
+ALTER TABLE
+    isuumo.estate
+ADD
+    INDEX `idx_rent`(rent);
+
 /*
- ALTER TABLE
- isuumo.estate
- ADD
- INDEX `idx_rent`(rent);
- 
  ALTER TABLE
  isuumo.estate
  ADD
