@@ -62,7 +62,7 @@ CREATE TABLE isuumo.chair (
 ALTER TABLE
     isuumo.chair
 ADD
-    INDEX `idx_stock_price_id`(stock, price, id);
+    INDEX `idx_price_id`(price, id);
 
 ALTER TABLE
     isuumo.chair
