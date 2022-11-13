@@ -32,12 +32,11 @@ ALTER TABLE
 ADD
     INDEX `idx_doorwidth_doorheight`(door_width, door_height);
 
-/*
- ALTER TABLE
- isuumo.estate
- ADD
- INDEX `idx_doorheight`(door_height);
- */
+ALTER TABLE
+    isuumo.estate
+ADD
+    INDEX `idx_doorheight`(door_height);
+
 ALTER TABLE
     isuumo.estate
 ADD
