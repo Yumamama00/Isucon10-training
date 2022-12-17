@@ -40,8 +40,8 @@ innodb_buffer_pool_size = 3072M
 
 max_connections = 1024
 
-key_buffer_size         = 128M
-query_cache_size        = 128M
+key_buffer_size         = 256M
+query_cache_size        = 256M
 
 thread_cache_size = 256
 innodb_log_file_size = 384M
