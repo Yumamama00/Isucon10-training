@@ -881,10 +881,13 @@ func searchEstateNazotte(c echo.Context) error {
 	}
 
 	b := coordinates.getBoundingBox()
-	estatesInBoundingBox := []Estate{}
 
-	query := `SELECT * FROM estate force index(idx_latitude_longitude) WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY negative_popularity ASC, id ASC`
-	err = db.Select(&estatesInBoundingBox, query, b.BottomRightCorner.Latitude, b.TopLeftCorner.Latitude, b.BottomRightCorner.Longitude, b.TopLeftCorner.Longitude)
+	estatesInPolygon := []Estate{}
+
+	query := fmt.Sprintf(`SELECT * FROM estate FORCE INDEX (idx_latitude_longitude) WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(CONCAT ('POINT(',latitude,' ',longitude,')'))) ORDER BY popularity_desc, id ASC`, coordinates.coordinatesToText())
+
+	err = db.Select(&estatesInPolygon, query, b.BottomRightCorner.Latitude, b.TopLeftCorner.Latitude, b.BottomRightCorner.Longitude, b.TopLeftCorner.Longitude)
+
 	if err == sql.ErrNoRows {
 		c.Echo().Logger.Infof("select * from estate where latitude ...", err)
 		return c.JSON(http.StatusOK, EstateSearchResponse{Count: 0, Estates: []Estate{}})
@@ -893,28 +896,12 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	estatesInPolygon := []Estate{}
-	if len(estatesInBoundingBox) > 0 {
-		var estateIDs []int64
-		for _, estate := range estatesInBoundingBox {
-			estateIDs = append(estateIDs, estate.ID)
-		}
-
-		query, args, err := sqlx.In(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(?), ST_GeomFromText(?))`, estateIDs, coordinates.coordinatesToText(), "POINT(latitude longitude)")
-		if err != nil {
-			c.Echo().Logger.Errorf("failed to create IN query : %v", err)
-			return c.NoContent(http.StatusInternalServerError)
-		}
-		query = db.Rebind(query)
-		err = db.Select(&estatesInPolygon, query, args...)
-		if err != nil {
-			c.Echo().Logger.Errorf("database execution error : %v", err)
-			return c.NoContent(http.StatusInternalServerError)
-		}
-	}
-
 	var re EstateSearchResponse
-	re.Estates = estatesInPolygon
+	if len(estatesInPolygon) > NazotteLimit {
+		re.Estates = estatesInPolygon[:NazotteLimit]
+	} else {
+		re.Estates = estatesInPolygon
+	}
 	re.Count = int64(len(re.Estates))
 
 	return c.JSON(http.StatusOK, re)
