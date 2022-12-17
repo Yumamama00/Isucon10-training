@@ -408,12 +408,6 @@ func searchChairs(c echo.Context) error {
 	conditions := make([]string, 0)
 	params := make([]interface{}, 0)
 
-	// クエリパラメータが指定されなかった場合は処理終了
-	if c.QueryString() == "" {
-		c.Echo().Logger.Infof("Search condition not found")
-		return c.NoContent(http.StatusBadRequest)
-	}
-
 	if c.QueryParam("priceRangeId") != "" {
 		chairPrice, err := getRange(chairSearchCondition.Price, c.QueryParam("priceRangeId"))
 		if err != nil {
@@ -530,15 +524,13 @@ func searchChairs(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	// カウント0件なら処理終了
-	if res.Count == 0 {
-		return c.JSON(http.StatusOK, ChairSearchResponse{Count: 0, Chairs: []Chair{}})
-	}
-
 	chairs := []Chair{}
 	params = append(params, perPage, page*perPage)
 	err = db.Select(&chairs, searchQuery+searchCondition+limitOffset, params...)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusOK, ChairSearchResponse{Count: 0, Chairs: []Chair{}})
+		}
 		c.Logger().Errorf("searchChairs DB execution error : %v", err)
 		return c.NoContent(http.StatusInternalServerError)
 	}
@@ -721,12 +713,6 @@ func searchEstates(c echo.Context) error {
 	conditions := make([]string, 0)
 	params := make([]interface{}, 0)
 
-	// クエリパラメータが指定されなかった場合は処理終了
-	if c.QueryString() == "" {
-		c.Echo().Logger.Infof("searchEstates search condition not found")
-		return c.NoContent(http.StatusBadRequest)
-	}
-
 	if c.QueryParam("doorHeightRangeId") != "" {
 		doorHeight, err := getRange(estateSearchCondition.DoorHeight, c.QueryParam("doorHeightRangeId"))
 		if err != nil {
@@ -814,15 +800,13 @@ func searchEstates(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	// カウント0件なら処理終了
-	if res.Count == 0 {
-		return c.JSON(http.StatusOK, EstateSearchResponse{Count: 0, Estates: []Estate{}})
-	}
-
 	estates := []Estate{}
 	params = append(params, perPage, page*perPage)
 	err = db.Select(&estates, searchQuery+searchCondition+limitOffset, params...)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusOK, EstateSearchResponse{Count: 0, Estates: []Estate{}})
+		}
 		c.Logger().Errorf("searchEstates DB execution error : %v", err)
 		return c.NoContent(http.StatusInternalServerError)
 	}
