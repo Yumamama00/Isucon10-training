@@ -884,7 +884,7 @@ func searchEstateNazotte(c echo.Context) error {
 
 	estatesInPolygon := []Estate{}
 
-	query := fmt.Sprintf(`SELECT * FROM estate FORCE INDEX (idx_latitude_longitude) WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(CONCAT ('POINT(',latitude,' ',longitude,')'))) ORDER BY popularity_desc, id ASC`, coordinates.coordinatesToText())
+	query := fmt.Sprintf(`SELECT * FROM estate FORCE INDEX (idx_latitude_longitude) WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(CONCAT ('POINT(',latitude,' ',longitude,')'))) ORDER BY negative_popularity, id ASC`, coordinates.coordinatesToText())
 
 	err = db.Select(&estatesInPolygon, query, b.BottomRightCorner.Latitude, b.TopLeftCorner.Latitude, b.BottomRightCorner.Longitude, b.TopLeftCorner.Longitude)
 
