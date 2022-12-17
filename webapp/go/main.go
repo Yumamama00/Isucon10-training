@@ -893,33 +893,27 @@ func searchEstateNazotte(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	count := 0
 	estatesInPolygon := []Estate{}
-	for _, estate := range estatesInBoundingBox {
-		validatedEstate := Estate{}
-
-		if count == NazotteLimit {
-			break
+	if len(estatesInBoundingBox) > 0 {
+		var estateIDs []int64
+		for _, estate := range estatesInBoundingBox {
+			estateIDs = append(estateIDs, estate.ID)
 		}
 
-		point := fmt.Sprintf("'POINT(%f %f)'", estate.Latitude, estate.Longitude)
-		query := fmt.Sprintf(`SELECT * FROM estate WHERE id = ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))`, coordinates.coordinatesToText(), point)
-		err = db.Get(&validatedEstate, query, estate.ID)
+		query, args, err := sqlx.In(`SELECT * FROM estate WHERE id IN (?) AND ST_Contains(ST_PolygonFromText(?), ST_GeomFromText(?))`, estateIDs, coordinates.coordinatesToText(), "POINT(latitude longitude)")
 		if err != nil {
-			if err == sql.ErrNoRows {
-				continue
-			} else {
-				c.Echo().Logger.Errorf("db access is failed on executing validate if estate is in polygon : %v", err)
-				return c.NoContent(http.StatusInternalServerError)
-			}
-		} else {
-			count++
-			estatesInPolygon = append(estatesInPolygon, validatedEstate)
+			c.Echo().Logger.Errorf("failed to create IN query : %v", err)
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		query = db.Rebind(query)
+		err = db.Select(&estatesInPolygon, query, args...)
+		if err != nil {
+			c.Echo().Logger.Errorf("database execution error : %v", err)
+			return c.NoContent(http.StatusInternalServerError)
 		}
 	}
 
 	var re EstateSearchResponse
-
 	re.Estates = estatesInPolygon
 	re.Count = int64(len(re.Estates))
 
